@@ -29,9 +29,13 @@ router.post("/todos", async(req, res) => {
     const collection = getCollection()
     const {todo} = req.body
 
-    const newTodo = await collection.insertOne({todo, status: false})
+    if(!todo){
+        return res.status(400).json({mssg: "Error no todo found"})
+    }
 
-   
+    todo = JSON.stringify(todo)
+
+    const newTodo = await collection.insertOne({todo, status: false})
 
     res.status(201).json({todo, status: false, id: newTodo.insertedId})
 })
@@ -57,6 +61,10 @@ router.put("/todos/:id", async(req, res) => {
     const _id = new ObjectId(req.params.id)
 
     const {status} = req.body
+
+    if(typeof status !== "boolean"){
+        return res.status(400).json({mssg: "Error invalid status"})
+    }
     
     const updatedTodo = await collection.updateOne({_id}, {$set: {status: !status}})
 
