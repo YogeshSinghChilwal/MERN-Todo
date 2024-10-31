@@ -12,7 +12,7 @@ const options = {
 }
 
 let client;
-const connectToMongoDB = async () => {      //* creating aa client if already a client is not created
+const connectToMongoDB = async () => {      //* creating a client if already a client is not created
     if(!client){
         try {
             client = await MongoClient.connect(uri, options)
