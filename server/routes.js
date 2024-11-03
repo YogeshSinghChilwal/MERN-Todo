@@ -27,17 +27,28 @@ router.get("/todos", async(req, res) => {
 router.post("/todos", async(req, res) => {
 
     const collection = getCollection()
-    const {todo} = req.body
+    let {todo} = req.body
 
     if(!todo){
         return res.status(400).json({mssg: "Error no todo found"})
     }
 
-    todo = JSON.stringify(todo)
+    todo = (typeof todo === "string") ? todo : JSON.stringify(todo)
 
     const newTodo = await collection.insertOne({todo, status: false})
 
-    res.status(201).json({todo, status: false, id: newTodo.insertedId})
+    res.status(201).json({todo, status: false, _id: newTodo.insertedId})
+
+    // try {
+    //     // Insert todo with `status` field set to `false`
+    //     const result = await collection.insertOne({ todo, status: false });
+    
+    //     // Return a consistent `_id` field in response
+    //     res.status(201).json({ _id: result.insertedId, todo, status: false });
+    //   } catch (error) {
+    //     console.error("Error inserting todo:", error);
+    //     res.status(500).json({ mssg: "Internal server error" });
+    //   }
 })
 
 // DELETE /todos/:id

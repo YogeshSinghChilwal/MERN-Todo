@@ -1,29 +1,66 @@
-import {useEffect, useState} from 'react'
+import { useEffect, useState } from "react";
+import Todo from "./Todo";
 
 function App() {
-
-  const [message, setMessage] = useState("")
+  const [todos, setTodos] = useState([]);
+  const [content, setContent] = useState("");
 
   useEffect(() => {
-    async function getTodos(){
-      const res = await fetch("/api/todos")
-      const todos = await res.json()
+    async function getTodos() {
+      const res = await fetch("/api/todos");
+      const todos = await res.json();
 
-      console.log(todos);
-      setMessage(todos.mssg)
-      
+      setTodos(todos);
     }
 
-    getTodos()
-  }, [])
+    getTodos();
+  }, []);
+
+  const createNewTodo = async (e) => {
+    e.preventDefault();
+    if (content.length > 3) {
+      const res = await fetch("/api/todos", {
+        method: "POST",
+        body: JSON.stringify({ todo: content }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const newTodo = await res.json();
+
+      setContent("");
+      setTodos([...todos, newTodo]);
+
+      
+    }
+  };
 
   return (
     <main className="container">
-      <h1>Hello World!</h1>
-      <p style={{color: "red", fontSize: "2rem"}}>{message}</p>
+      <h1 className="title">Hello World!</h1>
+
+      <form className="form" onSubmit={createNewTodo}>
+        <input
+          type="text"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Enter a new todo..."
+          className="form__input"
+          required
+        />
+        <button type="submit">Create Todo</button>
+      </form>
+
+      {/* { (todos.length > 0 ) && <pre style={{color: "red", fontSize: "2rem"}}> {JSON.stringify(todos, null, 2)} </pre>} */}
+
+      <div className="todos">
+        {todos.length > 0 &&
+          todos.map((todo) => (
+            <Todo key={todo._id }  todo={todo} setTodos={setTodos} />
+          ))}
+      </div>
     </main>
-  )
+  );
 }
 
-export default App
- 
+export default App;
