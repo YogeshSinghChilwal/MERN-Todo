@@ -37,7 +37,7 @@ function App() {
 
   return (
     <main className="container">
-      <h1 className="title">Hello World!</h1>
+      <h1 className="title">TickItOff!</h1>
 
       <form className="form" onSubmit={createNewTodo}>
         <input
